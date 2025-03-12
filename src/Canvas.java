@@ -10,23 +10,12 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     int w = 700;
     int h = 700;
     ArrayList<Point> points = new ArrayList<>();
+    boolean pointOnClick = false;
+    int pressX, pressY;
 
     Canvas() {
-        JLabel label = new JLabel("Тащи меня");
-        add(label);
         addMouseListener(this);
-        label.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                setLocation(e.getXOnScreen(), e.getYOnScreen());
-                repaint();
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-
-            }
-        });
+        addMouseMotionListener(this);
     }
 
     @Override
@@ -43,13 +32,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        points.add(new Point(e.getX(), e.getY()));
-        repaint();
+        if (pointOnClick){
+            points.add(new Point(e.getX(), e.getY()));
+            repaint();
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        pressX = e.getX();
+        pressY = e.getY();
     }
 
     @Override
@@ -69,7 +61,13 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        for (Point point : points) {
+            point.x += (e.getX() - pressX);
+            point.y += (e.getY() - pressY);
+        }
+        pressX = e.getX();
+        pressY = e.getY();
+        repaint();
     }
 
     @Override
