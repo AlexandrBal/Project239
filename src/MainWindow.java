@@ -28,20 +28,25 @@ public class MainWindow extends JFrame {
         JMenuItem keyboard = new JMenuItem("Клавиатура");
         keyboard.addActionListener(this::keyboardController);
         JMenuItem mouse = new JMenuItem("Мышка");
-//        mouse.addActionListener(this::mouseController);
+        mouse.addActionListener(this::mouseController);
         JMenuItem file = new JMenuItem("Файл");
-//        file.addActionListener(this::fileController);
+        file.addActionListener(this::fileController);
+        JMenuItem cursor = new JMenuItem("Курсор");
+        cursor.addActionListener(this::cursorController);
         viewMenu.add(keyboard);
         viewMenu.add(new JSeparator());
         viewMenu.add(mouse);
         viewMenu.add(new JSeparator());
         viewMenu.add(file);
+        viewMenu.add(new JSeparator());
+        viewMenu.add(cursor);
         return viewMenu;
     }
 
     public void keyboardController(ActionEvent ae) {
         JDialog dialog = new JDialog();
         dialog.setLayout(new FlowLayout());
+        dialog.setTitle("Ввод с клавиатуры");
         JLabel lb1 = new JLabel("Введите x:");
         JLabel lb2 = new JLabel("Введите y:");
         JTextField text1 = new JTextField("", 8);
@@ -62,11 +67,30 @@ public class MainWindow extends JFrame {
         dialog.add(text2);
         dialog.add(submit);
         dialog.setSize(200,150);
-        dialog.setTitle("Dialog Window");
         dialog.setLocationRelativeTo(null);
         dialog.setResizable(false);
         dialog.setVisible(true);
         dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    }
+
+    public void fileController(ActionEvent ae) {
+        JDialog dialog = new JDialog();
+        dialog.setLayout(new FlowLayout());
+        dialog.setTitle("Ввод из файла");
+        JFileChooser filechooser = new JFileChooser();
+        dialog.add(filechooser);
+        dialog.setSize(200,150);
+        dialog.setLocationRelativeTo(null);
+        dialog.setVisible(true);
+        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    }
+
+    public void mouseController(ActionEvent ae){
+        canvas.pointOnClick = true;
+    }
+
+    public void cursorController(ActionEvent ae){
+        canvas.pointOnClick = false;
     }
 
     public boolean isNumeric(String s) {
