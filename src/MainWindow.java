@@ -19,6 +19,7 @@ public class MainWindow extends JFrame {
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createChooseInputMenu());
+        menuBar.add(createSolutionButton());
         setJMenuBar(menuBar);
 
     }
@@ -41,6 +42,12 @@ public class MainWindow extends JFrame {
         viewMenu.add(new JSeparator());
         viewMenu.add(cursor);
         return viewMenu;
+    }
+
+    public JMenuItem createSolutionButton(){
+        JMenuItem solution = new JMenuItem("Решение");
+        solution.addActionListener(this::getSolution);
+        return solution;
     }
 
     public void keyboardController(ActionEvent ae) {
@@ -74,15 +81,16 @@ public class MainWindow extends JFrame {
     }
 
     public void fileController(ActionEvent ae) {
-        JDialog dialog = new JDialog();
-        dialog.setLayout(new FlowLayout());
-        dialog.setTitle("Ввод из файла");
         JFileChooser filechooser = new JFileChooser();
-        dialog.add(filechooser);
-        dialog.setSize(200,150);
-        dialog.setLocationRelativeTo(null);
-        dialog.setVisible(true);
-        dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        filechooser.setVisible(true);
+        filechooser.setDialogTitle("Выберите файл");
+        filechooser.setSize(200, 300);
+        int res = filechooser.showOpenDialog(this);
+        if (res == JFileChooser.APPROVE_OPTION) {
+
+        } else if (res == JFileChooser.CANCEL_OPTION) {
+
+        }
     }
 
     public void mouseController(ActionEvent ae){
@@ -100,6 +108,17 @@ public class MainWindow extends JFrame {
             return false;
         }
         return true;
+    }
+
+    public void getSolution(ActionEvent ae) {
+        Solution sol = new Solution();
+        try {
+            canvas.circle1 = sol.solution(canvas.points).get(0);
+            canvas.circle2 = sol.solution(canvas.points).get(1);
+        } catch (Exception e) {
+
+        }
+        canvas.repaint();
     }
 
     public static void main(String[] args) {
