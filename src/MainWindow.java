@@ -11,16 +11,21 @@ public class MainWindow extends JFrame {
     public Canvas canvas = new Canvas();
 
     MainWindow() {
-        setTitle("Графика");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(w, h);
-        setLocationRelativeTo(null);
-        add(canvas);
+        JFrame frame = new JFrame();
+        JPanel panel = new JPanel();
+
+        frame.setTitle("Графика");
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setSize(w, h);
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(new BorderLayout());
+        panel.add(canvas);
 
         JMenuBar menuBar = new JMenuBar();
         menuBar.add(createChooseInputMenu());
         menuBar.add(createSolutionButton());
-        setJMenuBar(menuBar);
+        frame.add(menuBar, BorderLayout.NORTH);
+        frame.add(panel);
 
     }
 
@@ -123,5 +128,8 @@ public class MainWindow extends JFrame {
 
     public static void main(String[] args) {
         new MainWindow().setVisible(true);
+    }
+}
+
     }
 }
