@@ -12,6 +12,8 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     ArrayList<Point> points = new ArrayList<>();
     boolean pointOnClick = false;
     int pressX, pressY;
+    Point circle1 = null;
+    Point circle2 = null;
 
     Canvas() {
         addMouseListener(this);
@@ -26,6 +28,11 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
         for (Point point : points){
             g.fillOval(point.x-5, point.y-5, 10, 10);
+        }
+
+        if (circle1 != null && circle2 != null) {
+            g.drawOval(circle1.x-(int)circle1.possible_rad/2, circle1.y-(int)circle1.possible_rad/2, (int)circle1.possible_rad, (int)circle1.possible_rad);
+            g.drawOval(circle2.x-(int)circle2.possible_rad/2, circle2.y-(int)circle2.possible_rad/2, (int)circle2.possible_rad, (int)circle2.possible_rad);
         }
 
     }
