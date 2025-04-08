@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Solution {
-    public List<Point> solution(ArrayList<Point> points) {
+    public List<MyPoint> solution(ArrayList<MyPoint> points) {
         if (points.isEmpty()) {
             return null;
         }
@@ -18,14 +18,14 @@ public class Solution {
         double bestR2 = 0;
 
         for (int i = 0; i < n; i++) {
-            Point c1 = points.get(i);
+            MyPoint c1 = points.get(i);
             for (int j = 0; j < n; j++) {
-                Point c2 = points.get(j);
+                MyPoint c2 = points.get(j);
 
                 double maxSq1 = 0;
                 double maxSq2 = 0;
 
-                for (Point p : points) {
+                for (MyPoint p : points) {
                     double dx1 = p.x - c1.x;
                     double dy1 = p.y - c1.y;
                     double sq1 = dx1 * dx1 + dy1 * dy1;
@@ -63,8 +63,8 @@ public class Solution {
             return null;
         }
 
-        Point center1 = points.get(bestI);
-        Point center2 = points.get(bestJ);
+        MyPoint center1 = points.get(bestI);
+        MyPoint center2 = points.get(bestJ);
 
         center1.possible_rad = bestR1;
         center2.possible_rad = bestR2;

@@ -2,6 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class MainWindow extends JFrame {
 
@@ -21,10 +24,9 @@ public class MainWindow extends JFrame {
         menuBar.add(createChooseInputMenu());
         menuBar.add(createSolutionButton());
         setJMenuBar(menuBar);
-
     }
 
-    public JMenu createChooseInputMenu(){
+    public JMenu createChooseInputMenu() {
         JMenu viewMenu = new JMenu("Выбрать");
         JMenuItem keyboard = new JMenuItem("Клавиатура");
         keyboard.addActionListener(this::keyboardController);
@@ -44,9 +46,10 @@ public class MainWindow extends JFrame {
         return viewMenu;
     }
 
-    public JMenuItem createSolutionButton(){
-        JMenuItem solution = new JMenuItem("Решение");
+    public JButton createSolutionButton(){
+        JButton solution = new JButton("Решение");
         solution.addActionListener(this::getSolution);
+        solution.setFocusable(false);
         return solution;
     }
 
@@ -63,7 +66,7 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (isNumeric(text1.getText()) && isNumeric(text2.getText())) {
-                    canvas.points.add(new Point(Integer.parseInt(text1.getText()), Integer.parseInt(text2.getText())));
+                    canvas.points.add(new MyPoint(Integer.parseInt(text1.getText()), Integer.parseInt(text2.getText())));
                     canvas.repaint();
                 }
             }
@@ -87,9 +90,20 @@ public class MainWindow extends JFrame {
         filechooser.setSize(200, 300);
         int res = filechooser.showOpenDialog(this);
         if (res == JFileChooser.APPROVE_OPTION) {
-
+            File file = filechooser.getSelectedFile();
+            try {
+                Scanner data = new Scanner(file);
+                while (data.hasNextLine()) {
+                    String s = data.nextLine();
+                    s = s.replace(" ", "");
+                    canvas.points.add(new MyPoint(Integer.parseInt(s.split(";")[0]), Integer.parseInt(s.split(";")[1])));
+                }
+                canvas.repaint();
+            } catch (FileNotFoundException e) {
+                JOptionPane.showMessageDialog(this, "Ошибка при чтении файла!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
+            }
         } else if (res == JFileChooser.CANCEL_OPTION) {
-
+            filechooser.cancelSelection();
         }
     }
 
@@ -116,7 +130,7 @@ public class MainWindow extends JFrame {
             canvas.circle1 = sol.solution(canvas.points).get(0);
             canvas.circle2 = sol.solution(canvas.points).get(1);
         } catch (Exception e) {
-
+            JOptionPane.showMessageDialog(this, "Ошибка при решении задачи!", "Ошибка!", JOptionPane.ERROR_MESSAGE);
         }
         canvas.repaint();
     }
