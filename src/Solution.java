@@ -8,8 +8,6 @@ public class Solution {
         }
 
         int n = points.size();
-        double[][] dist = new double[n][n];
-
 
         double minMaxRadius = Double.POSITIVE_INFINITY;
         int bestI = -1;

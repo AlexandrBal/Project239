@@ -4,13 +4,12 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class Canvas extends JPanel implements MouseListener, MouseMotionListener {
 
-    int w = 700;
-    int h = 700;
-    MyPoint centerPoint = null;
+    MyPoint centerPoint = new MyPoint(0, 0);
     Axes Ox, Oy;
     ArrayList<MyPoint> points = new ArrayList<>();
     boolean pointOnClick = false;
@@ -26,14 +25,16 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         addMouseListener(this);
         addMouseMotionListener(this);
         addMouseWheelListener(we -> {
-            double delta = 0.1;
-            if (we.getWheelRotation() < 0) {
-                // Приближение (колесико вверх)
-                scale *= 1.1;
-            } else {
-                // Отдаление (колесико вниз)
-                scale /= 1.1;
-            }
+            double zoomFactor = we.getWheelRotation() < 0 ? 1.1 : 0.9;
+            Point mousePos = we.getPoint();
+
+            Point2D worldPosBefore = screenToWorld(mousePos);
+            scale *= zoomFactor;
+            Point2D worldPosAfter = screenToWorld(mousePos);
+
+            translateX += (worldPosAfter.getX() - worldPosBefore.getX()) * scale;
+            translateY += (worldPosAfter.getY() - worldPosBefore.getY()) * scale;
+
             repaint();
         });
     }
@@ -41,19 +42,20 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
     @Override
     public void paint(Graphics g) {
         super.paint(g);
+        points.add(centerPoint);
         Graphics2D g2d = (Graphics2D) g;
 
-        if (centerPoint == null) {
-            centerPoint = new MyPoint(getWidth()/2, getHeight()/2);
-        }
+        g2d.translate(getWidth()/2, getHeight()/2);
+
 
         g2d.translate(translateX, translateY);
-        System.out.println(scale);
         g2d.scale(scale, scale);
 
+        System.out.println(centerPoint.x + " " + centerPoint.y);
 
-        Ox = new Axes((int) (-(double)translateX/scale), centerPoint.y, (int)((getWidth()-translateX)/scale), centerPoint.y);
-        Oy = new Axes(centerPoint.x, (int)(-(double)translateY/scale), centerPoint.x, (int)((getHeight()-translateY)/scale));
+
+        Ox = new Axes((int)((-getWidth()-translateX)/scale), 0, (int)((getWidth()-translateX)/scale), 0);
+        Oy = new Axes(0, (int)((-getHeight()-translateY)/scale), 0, (int)((getHeight()-translateY)/scale));
 
         g.setColor(Color.BLACK);
         g.drawLine(Oy.x1, Oy.y1, Oy.x2, Oy.y2);
@@ -70,12 +72,20 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
         }
     }
 
+    private Point2D screenToWorld(Point screenPoint) {
+        int centerX = getWidth()/2;
+        int centerY = getHeight()/2;
+        return new Point2D.Double(
+                (screenPoint.x - centerX - translateX) / scale,
+                (screenPoint.y - centerY - translateY) / scale
+        );
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (pointOnClick){
-            System.out.println(e.getX() + " " + e.getY());
-            double invertedX = (e.getX() - translateX) / scale;
-            double invertedY = (e.getY() - translateY) / scale;
+            double invertedX = (e.getX()/scale-(getWidth()/2+translateX) / scale);
+            double invertedY = (e.getY()/scale-(getHeight()/2+translateY) / scale);
             points.add(new MyPoint((int) invertedX, (int) invertedY));
         }
         repaint();
@@ -83,8 +93,6 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
 
     @Override
     public void mousePressed(MouseEvent e) {
-        pressX = e.getX();
-        pressY = e.getY();
         lastDragPoint = e.getPoint();
     }
 
@@ -111,21 +119,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             translateY += dy;
             lastDragPoint = e.getPoint();
 
-//            for (MyPoint point : points) {
-//                point.x += (e.getX() - pressX);
-//                point.y += (e.getY() - pressY);
-//            }
 
-//            centerPoint.x += (e.getX() - pressX);
-//            centerPoint.y += (e.getY() - pressY);
-
-//            Ox.y1 += (e.getY() - pressY);
-//            Ox.y2 += (e.getY() - pressY);
-//            Oy.x1 += (e.getX() - pressX);
-//            Oy.x2 += (e.getX() - pressX);
-
-            pressX = e.getX();
-            pressY = e.getY();
             repaint();
         }
     }
