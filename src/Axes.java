@@ -1,5 +1,4 @@
-public class Axes {
-
+public class Axes { // Класс для удобного представления осей
     int x1;
     int y1;
     int x2;
